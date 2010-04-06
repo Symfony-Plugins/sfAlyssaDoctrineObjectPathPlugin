@@ -1,0 +1,57 @@
+# sfAlyssaDoctrineObjectPathPlugin plugin #
+
+## Introduction ##
+
+This plugin adds ObjectPath support to Doctrine.
+
+This syntax makes it very easy to do sorting and filtering on foreign fields. ObjectPaths are dot-seperated relation-names that relate from one object to another and this behavior translates the objectPaths to table-aliasses.
+
+This plugin is based on the work of Leon van der Ree and your plugin
+ [sfPropelObjectPathBehaviorPlugin](http://www.symfony-project.org/plugins/sfPropelObjectPathBehaviorPlugin).
+
+
+## Installation
+
+1.Download and install the plugin
+
+    ./symfony plugin:install sfAlyssaSmsPlugin
+
+2.Clear the cache
+
+    ./symfony cc
+
+
+## Example ##
+
+
+So a very simple ObjectPath from City to Country is simply "Country" and from Country to City it would be "City":
+In other words the relation-name.
+
+However ObjectPaths support dots to 'jump' from object to object. So for example from Review to Book to Author would be "Book.Author".
+
+In Php-code this shows up as:
+
+    [php]
+    $query = Doctrine_Query::create();
+    $reviews = $query->
+      joinByObjectPath('Book.Author')->
+      orderByObjectPath('Book.Author.FirstName asc')->
+      excecute();
+
+to find all reviews, joined with their Books, joined with their Authors.
+
+## Note ##
+
+The sfAlyssaDoctrineObjectPathPlugin is used in the sfDataSourcePlugin, but not required.
+
+
+
+## Todo ##
+
+* Improve the documentation with more examples
+
+
+## Changelog ##
+
+### 2010-04-06 | 1.0.0 ###
+* Initial import
