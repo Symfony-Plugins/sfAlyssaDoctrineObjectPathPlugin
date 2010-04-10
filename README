@@ -4,11 +4,12 @@
 
 This plugin adds ObjectPath support to Doctrine.
 
-This syntax makes it very easy to do sorting and filtering on foreign fields. ObjectPaths are dot-seperated relation-names that relate from one object to another and this behavior translates the objectPaths to table-aliasses.
+This syntax makes it very easy to do sorting and filtering on foreign fields. ObjectPaths are dot-separated relation-names that relate from one object to another and this implementation translates the ObjectPaths to table-aliasses. The PropertyPaths are ObjectPaths with a field-name last element.    
 
 This plugin is based on the work of Leon van der Ree and your plugin
  [sfPropelObjectPathBehaviorPlugin](http://www.symfony-project.org/plugins/sfPropelObjectPathBehaviorPlugin).
 
+Note: this plugin implement only a left join union. Other types are not supported yet.
 
 ## Installation
 
@@ -23,11 +24,12 @@ This plugin is based on the work of Leon van der Ree and your plugin
 
 ## Example ##
 
-
 So a very simple ObjectPath from City to Country is simply "Country" and from Country to City it would be "City":
 In other words the relation-name.
 
-However ObjectPaths support dots to 'jump' from object to object. So for example from Review to Book to Author would be "Book.Author".
+However ObjectPaths support dots to 'jump' from object to object. Also you can use PropertyPaths, similar to ObjectPaths, to 'jump' from object to field.
+So for example from Review to Book to Author the ObjectPath would be "Book.Author" and the PropertyPath would be "Book.Author.FirstName". 
+
 
 In Php-code this shows up as:
 
@@ -35,23 +37,39 @@ In Php-code this shows up as:
     $query = Doctrine_Query::create();
     $reviews = $query->
       joinByObjectPath('Book.Author')->
-      orderByObjectPath('Book.Author.FirstName asc')->
+      orderByProperyPath('Book.Author.FirstName asc')->
       excecute();
 
-to find all reviews, joined with their Books, joined with their Authors.
+to find all reviews, left joined with their Books, left joined with their Authors.
+
+There are some extra methods working with PropertyPaths:
+
+    [php]
+    $query = Doctrine_Query::create();
+    $reviews = $query->
+      joinByObjectPath('Book.Author')->
+      whereByProperyPath('Book.Author.FirstName = ?', 'Sergio')->
+      orderByPropertyPath('Book.Title')->
+      excecute();
+
+similar to previous query, but filtering by FirstName property of Author and ordering by Title property of Book.
+
 
 ## Note ##
 
-The sfAlyssaDoctrineObjectPathPlugin is used in the sfDataSourcePlugin, but not required.
+The sfAlyssaDoctrineObjectPathPlugin is used in the [sfDataSourcePlugin](http://www.symfony-project.org/plugins/sfDataSourcePlugin), but not required.
 
 
 
 ## Todo ##
 
-* Improve the documentation with more examples
+* Implement more join types.
 
 
 ## Changelog ##
+
+### 2010-04-10 | 1.0.1 ###
+* Fixed documentation
 
 ### 2010-04-06 | 1.0.0 ###
 * Initial import
