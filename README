@@ -9,17 +9,31 @@ This syntax makes it very easy to do sorting and filtering on foreign fields. Ob
 This plugin is based on the work of Leon van der Ree and your plugin
  [sfPropelObjectPathBehaviorPlugin](http://www.symfony-project.org/plugins/sfPropelObjectPathBehaviorPlugin).
 
-Note: this plugin implement only a left join union. Other types are not supported yet.
+Doctrine version 1.2 is fully supported. For Doctrine version 1.0 and 1.1 there are some restrictions (it's not possible set up a customized query class) with the use of [sfDataSourcePlugin](http://www.symfony-project.org/plugins/sfDataSourcePlugin). 
 
-## Installation
+Note: this plugin implement only a left join union. Other types are not supported yet.  
+
+
+## Installation ##
 
 1.Download and install the plugin
 
     ./symfony plugin:install sfAlyssaSmsPlugin
+    
+2.Check that sfAlyssaDoctrineObjectPathPlugin is enabled before sfDoctrinePlugin. 
 
-2.Clear the cache
+    [php]
+    public function setup()
+    {
+       $this->enablePlugins('sfAlyssaDoctrineObjectPathPlugin');
+       $this->enablePlugins('sfDoctrinePlugin');
+       ...
+    }
+
+3.Clear the cache
 
     ./symfony cc
+
 
 
 ## Example ##
@@ -36,28 +50,44 @@ In Php-code this shows up as:
     [php]
     $query = Doctrine_Query::create();
     $reviews = $query->
+      from('Review')->
       joinByObjectPath('Book.Author')->
       orderByProperyPath('Book.Author.FirstName asc')->
       excecute();
 
 to find all reviews, left joined with their Books, left joined with their Authors.
 
+
+For Doctrine 1.0 and 1.1, the php-code look like:
+
+    [php]
+    $query = sfAlyssaDoctrineQuery::create();
+    $reviews = $query->
+      from('Review')->
+      joinByObjectPath('Book.Author')->
+      orderByProperyPath('Book.Author.FirstName asc')->
+      excecute();
+
+in this case, we need an instance of 'sfAlyssaDoctrineQuery' customized doctrine query class.
+
 There are some extra methods working with PropertyPaths:
 
     [php]
     $query = Doctrine_Query::create();
     $reviews = $query->
+      from('Review')->
       joinByObjectPath('Book.Author')->
       whereByProperyPath('Book.Author.FirstName = ?', 'Sergio')->
       orderByPropertyPath('Book.Title')->
       excecute();
 
-similar to previous query, but filtering by FirstName property of Author and ordering by Title property of Book.
+similar to previous query for Doctrine 1.2, but filtering by FirstName property of Author and ordering by Title property of Book.
+
 
 
 ## Note ##
 
-The sfAlyssaDoctrineObjectPathPlugin is used in the [sfDataSourcePlugin](http://www.symfony-project.org/plugins/sfDataSourcePlugin), but not required.
+The sfAlyssaDoctrineObjectPathPlugin is also used in the [sfDataSourcePlugin](http://www.symfony-project.org/plugins/sfDataSourcePlugin), but not required.
 
 
 

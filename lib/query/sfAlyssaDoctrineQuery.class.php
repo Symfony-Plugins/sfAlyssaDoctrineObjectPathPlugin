@@ -22,6 +22,28 @@ class sfAlyssaDoctrineQuery extends Doctrine_Query{
   const ALIAS_DELIMITER = '___';
 
   /**
+   * create
+   * returns a new Doctrine_Query object
+   *
+   * @see Doctrine_Query::create()
+   *
+   * @param Doctrine_Connection $conn  optional connection parameter
+   * @param string $class              Query class to instantiate
+   * @return Doctrine_Query
+   */
+  public static function create($conn = null, $class = null)
+  {
+    // Doctrine < 1.2 does not support customized query class
+    // and factory method "create" brings only a Doctrine_Query instance.
+    if (strpos(Doctrine::VERSION, '1.2') === false){
+      return new sfAlyssaDoctrineQuery($conn);
+    }
+
+    return parent::create($conn, $class);
+
+  }
+
+  /**
    * Recursively performs join on the provided ObjectPaths
    *
    * @param  mixed  $objectPath one or more strings with objectPaths

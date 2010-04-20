@@ -52,11 +52,17 @@ class sfAlyssaDoctrineObjectPathPluginConfiguration extends sfPluginConfiguratio
    */
   public function configureDoctrine(sfEvent $event)
   {
-    $manager = $event->getSubject();
 
-    if ('Doctrine_Query' == $manager->getAttribute(Doctrine_Core::ATTR_QUERY_CLASS))
-    {
-      $manager->setAttribute(Doctrine_Core::ATTR_QUERY_CLASS, 'sfAlyssaDoctrineQuery');
+    // configure Doctrine_Query class only supported in Doctrine >= 1.2
+    if (strpos(Doctrine::VERSION, '1.2') !== false){
+
+      $manager = $event->getSubject();
+
+      if ('Doctrine_Query' == $manager->getAttribute(Doctrine::ATTR_QUERY_CLASS))
+      {
+        $manager->setAttribute(Doctrine::ATTR_QUERY_CLASS, 'sfAlyssaDoctrineQuery');
+      }
+
     }
 
   }
