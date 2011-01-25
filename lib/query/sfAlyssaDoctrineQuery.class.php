@@ -196,6 +196,20 @@ class sfAlyssaDoctrineQuery extends Doctrine_Query{
   }
 
   /**
+   * Adds ProperyPaths to the OR WHERE part of the query.
+   *
+   * @param string $where Query WHERE part
+   * @param mixed $params An array of parameters or a simple scalar
+   * @return sfAlyssaDoctrineQuery
+   */
+  public function orWhereProperyPath($where, $params = array())
+  {
+    $expr = $this->propertyPathToColumn($where);
+
+    return $this->orWhere($expr, $params);
+  }
+
+  /**
    * Adds ProperyPaths to the GROUP BY part of the query.
    * <code>
    * $q->groupBy('Relation.id');
